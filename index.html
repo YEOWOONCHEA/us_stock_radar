@@ -7,32 +7,115 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        body { background-color: #111827; color: #d1d5db; font-family: 'Inter', sans-serif; }
-        .glass { background: rgba(31, 41, 55, 0.8); backdrop-filter: blur(10px); border: 1px solid #374151; }
+        body { background-color: #0b0f19; color: #cbd5e1; font-family: 'Inter', sans-serif; }
+        .glass { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(10px); border: 1px solid #1e293b; }
+        /* Widget sizing */
+        .tv-widget-wrapper { height: 600px; width: 100%; border-radius: 0.5rem; overflow: hidden; }
     </style>
 </head>
 <body class="p-8">
     <h1 class="text-3xl font-extrabold text-blue-400 mb-2"><i class="fas fa-globe-americas"></i> 1004MAS US STOCK RADAR</h1>
-    <p class="text-gray-400 mb-8">나스닥(NASDAQ) 및 S&P500 빅테크 AI 감시망</p>
+    <p class="text-gray-400 mb-8">월스트리트(Wall Street) 기관 수급 실시간 포착</p>
     
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div class="glass p-6 rounded-xl">
-            <h2 class="text-xl font-bold text-white mb-4">현재 주도주 (Megatech Gainers)</h2>
-            <div class="flex justify-between items-center bg-black/50 p-4 rounded-lg">
-                <span class="text-2xl font-bold text-white">NVDA</span>
-                <span class="text-2xl font-black text-green-400">+5.12%</span>
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <!-- 실시간 트레이딩뷰 위젯 레이더 -->
+        <div class="lg:col-span-5 glass p-6 rounded-xl">
+            <h2 class="text-xl font-bold text-white mb-4"><i class="fas fa-money-bill-wave text-green-400 animate-pulse mr-2"></i> 실시간 핫 리스트 (US)</h2>
+            <div class="tv-widget-wrapper bg-black/40 border border-gray-800">
+                <!-- TradingView Widget BEGIN -->
+                <div class="tradingview-widget-container">
+                    <div class="tradingview-widget-container__widget"></div>
+                    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-hotlists.js" async>
+                    {
+                    "colorTheme": "dark",
+                    "dateRange": "1D",
+                    "exchange": "US",
+                    "showChart": true,
+                    "locale": "kr",
+                    "width": "100%",
+                    "height": "100%",
+                    "largeChartUrl": "",
+                    "isTransparent": true,
+                    "showSymbolLogo": true,
+                    "showFloatingTooltip": false
+                    }
+                    </script>
+                </div>
+                <!-- TradingView Widget END -->
             </div>
-            <p class="text-right text-sm text-gray-500 mt-2">Yahoo Finance Ticker 감지</p>
         </div>
         
-        <div class="glass p-6 rounded-xl border-l-4 border-blue-400">
-            <h2 class="text-lg font-bold text-white mb-2"><i class="fas fa-brain"></i> 제갈량 판결 (Verdicts)</h2>
-            <p class="text-gray-300 text-sm leading-relaxed">
-                "차세대 블랙웰(Blackwell) 칩 양산 지연 우려 완화 및 기관 투자자 수급 폭발로 인한 건전 상승. 보유 포지션 권장."
-            </p>
+        <!-- 제갈량 판결 리스트 -->
+        <div class="lg:col-span-7 glass p-6 rounded-xl relative">
+            <h2 class="text-xl font-bold text-white mb-4 flex justify-between items-center">
+                <div><i class="fas fa-brain text-purple-400 mr-2"></i> 제갈량 전술 통제합동소 (US Stock)</div>
+                <div class="flex items-center text-xs text-green-400"><div class="w-2 h-2 bg-green-400 rounded-full animate-ping mr-2"></div> AI 위성 수신 중</div>
+            </h2>
+            <div id="ai-verdict-list" class="space-y-4">
+                <div class="text-gray-400 text-sm">로컬 파이썬 봇의 시그널을 대기 중입니다...</div>
+            </div>
         </div>
     </div>
+    
+    <div class="mt-8 text-center text-sm">
+        <a href="https://www.1004mas.com" class="text-blue-500 hover:text-white underline"><i class="fas fa-door-open mr-1"></i> 중앙 포탈로 복귀</a>
+    </div>
+    
+    <script>
+        let aiVerdictsCache = [];
 
-    <div class="mt-8 text-center"><a href="https://www.1004mas.com" class="text-blue-500 hover:text-white underline">포탈(Portal) 복귀</a></div>
+        async function fetchAIVerdict() {
+            try {
+                // US Stock JSONBin ID
+                const res = await fetch('https://api.jsonbin.io/v3/b/69d071d836566621a87965e2?meta=false');
+                const data = await res.json();
+                
+                if(Array.isArray(data)) {
+                    aiVerdictsCache = data;
+                    renderVerdicts();
+                }
+            } catch(e) {
+                console.error("Verdict Fetch Error:", e);
+            }
+        }
+
+        function renderVerdicts() {
+            if(aiVerdictsCache.length === 0) return;
+            
+            const styles = {
+                'red': 'border-red-500/40 bg-red-900/10',
+                'green': 'border-green-500/40 bg-green-900/10',
+                'yellow': 'border-yellow-500/40 bg-yellow-900/10'
+            };
+            
+            const badges = {
+                'red': '<span class="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded shadow-lg shadow-red-500/30"><i class="fas fa-ban mr-1"></i> 관망 / 고점 주의</span>',
+                'green': '<span class="bg-green-500 text-white text-xs font-bold px-2 py-1 rounded shadow-lg shadow-green-500/30"><i class="fas fa-check-circle mr-1"></i> 포지션 유지 / 매수</span>',
+                'yellow': '<span class="bg-yellow-500 text-black text-xs font-bold px-2 py-1 rounded shadow-lg shadow-yellow-500/30"><i class="fas fa-exclamation-triangle mr-1"></i> 뉴스 기반 스윙</span>'
+            };
+            
+            const html = aiVerdictsCache.map(v => {
+                const style = styles[v.signal] || styles['yellow'];
+                const badge = badges[v.signal] || badges['yellow'];
+                
+                return `
+                    <div class="p-4 rounded-xl border ${style} backdrop-blur-sm relative overflow-hidden transition-all hover:scale-[1.01]">
+                        <div class="flex justify-between items-start mb-3">
+                            <h3 class="font-extrabold text-white text-lg">${v.coin_name}</h3> <!-- coin_name 필드를 주식 이름으로 활용 -->
+                            ${badge}
+                        </div>
+                        <p class="text-sm text-gray-300 leading-relaxed whitespace-pre-line">${v.reason}</p>
+                        <div class="text-right text-xs mt-3 text-gray-500"><i class="far fa-clock"></i> ${v.timestamp} (AI 분석결과)</div>
+                    </div>
+                `;
+            }).join('');
+            
+            document.getElementById('ai-verdict-list').innerHTML = html;
+        }
+        
+        // Start Engine
+        fetchAIVerdict();
+        setInterval(fetchAIVerdict, 60000);
+    </script>
 </body>
 </html>
