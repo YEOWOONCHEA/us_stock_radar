@@ -236,9 +236,14 @@
         // 2. Data Fetch (CORS Bypass using Script Injection)
         function fetchData() {
             const script = document.createElement('script');
-            // Cloudflare Real-Time Tunnel (Direct to Master PC)
-            const TUNNEL_URL = 'https://rapid-forests-theatre-rotation.trycloudflare.com';
-            script.src = `${TUNNEL_URL}/us_data.js?t=${new Date().getTime()}`;
+            // 접속 환경(로컬 파일 vs 외부 도메인)에 따라 완벽하게 통신 경로 자동 분기
+            let dataUrl = '/us_data.js';
+            if (window.location.protocol === 'file:') {
+                dataUrl = 'http://localhost:8088/us_data.js';
+            } else {
+                dataUrl = 'https://mines-regulations-setting-marks.trycloudflare.com/us_data.js';
+            }
+            script.src = `${dataUrl}?t=${new Date().getTime()}`;
             
             script.onload = () => {
                 if (window.usTopVolume) topVolumeCache = window.usTopVolume;
