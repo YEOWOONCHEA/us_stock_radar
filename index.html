@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>1004MAS KRX 전술 레이더 (Ultimate 3-Panel)</title>
+    <title>1004MAS US SUPREME (Ultimate 3-Panel)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
@@ -119,28 +119,31 @@
     <header class="flex flex-col md:flex-row justify-between items-center px-2 shrink-0 gap-2 mb-2 lg:mb-0">
         <div class="flex items-center gap-4 w-full md:w-auto justify-between md:justify-start">
             <h1 class="text-xl md:text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-amber-500 flex items-center shrink-0">
-                <i class="fas fa-satellite-dish text-blue-500 mr-2"></i> 1004MAS US SUPREME
+                <i class="fas fa-satellite-dish text-red-500 mr-2"></i> 1004MAS US SUPREME
             </h1>
-            <span id="market-status-badge" class="text-[10px] md:text-[11px] font-bold bg-red-600 px-2 py-0.5 rounded text-white animate-pulse shrink-0">월스트리트 메이저 수급 폭발</span>
+            <span id="market-status-badge" class="text-[13px] md:text-[14px] font-bold bg-red-600/90 px-2 py-0.5 rounded text-white animate-pulse shrink-0">정규장 거래대금 폭발</span>
         </div>
         <div class="flex items-center gap-2 md:gap-4 w-full md:w-auto justify-between md:justify-end">
-            <!-- KOSPI / KOSDAQ Display -->
+            <!-- S&P500 / NASDAQ Display -->
             <div id="market-indices" class="hidden md:flex items-center gap-3">
-                <div class="text-[11px] font-mono font-bold px-2 py-0.5 rounded border border-gray-800 bg-black/60">
-                    <span class="text-gray-400">S&P500</span> 
-                    <span id="idx-kospi-price" class="text-white ml-1">-.--</span> 
-                    <span id="idx-kospi-chg" class="ml-1 text-[9px]">-.--%</span>
+                <div id="idx-sp500-box" class="text-[14px] flex items-center font-mono font-bold px-3 py-1 rounded border border-gray-700 bg-black/60 shadow-inner transition-colors">
+                    <span class="text-gray-300 mr-2">코스피</span> 
+                    <span id="idx-sp500-price" class="text-white">-.--</span> 
+                    <span id="idx-sp500-chg" class="ml-2">-.--%</span>
                 </div>
-                <div class="text-[11px] font-mono font-bold px-2 py-0.5 rounded border border-gray-800 bg-black/60">
-                    <span class="text-gray-400">나스닥</span> 
-                    <span id="idx-kosdaq-price" class="text-white ml-1">-.--</span> 
-                    <span id="idx-kosdaq-chg" class="ml-1 text-[9px]">-.--%</span>
+                <div id="idx-nasdaq-box" class="text-[14px] flex items-center font-mono font-bold px-3 py-1 rounded border border-gray-700 bg-black/60 shadow-inner transition-colors">
+                    <span class="text-gray-300 mr-2">코스닥</span> 
+                    <span id="idx-nasdaq-price" class="text-white">-.--</span> 
+                    <span id="idx-nasdaq-chg" class="ml-2">-.--%</span>
                 </div>
             </div>
-            <div class="font-mono text-[10px] md:text-[11px] font-bold text-gray-500 flex items-center gap-2 bg-black/50 px-3 py-1 rounded border border-gray-800">
-                <i class="fas fa-flag-checkered"></i> TARGET CLOSE
-                <span id="market-close-timer" class="text-blue-500 text-sm ml-1">--:--:--</span>
+            <div class="font-mono text-[12px] md:text-[13px] font-bold text-gray-400 flex items-center gap-2 bg-black/50 px-3 py-1 rounded border border-gray-700">
+                <i class="fas fa-flag-checkered text-gray-500"></i> TARGET CLOSE
+                <span id="market-close-timer" class="text-red-500 text-[14px] ml-1">--:--:--</span>
             </div>
+            <button onclick="document.getElementById('settings-modal').classList.remove('hidden')" class="px-4 py-2 bg-gray-800 border border-gray-600 hover:border-gray-400 rounded-lg text-[14px] text-white font-bold transition-colors shadow-lg shadow-black/50 tooltip" title="텔레그램 환경설정">
+                <i class="fas fa-cog"></i> 설정
+            </button>
             <div id="live-clock" class="text-lg md:text-xl font-mono font-black text-white bg-black/80 px-4 py-1.5 rounded border border-gray-700 tracking-widest shrink-0">
                 --:--:--
             </div>
@@ -150,41 +153,72 @@
     <!-- 3-Panel Main Area -->
     <main class="flex-1 flex flex-col lg:flex-row gap-4 min-h-0">
         
-        <!-- P1: Sector Heatmap -->
-        <section class="panel w-full lg:w-1/4 h-[400px] lg:h-auto">
-            <div class="panel-header text-gray-300">
+        <!-- P1: Sector Heatmap & Sniper -->
+        <section class="panel w-full lg:w-1/4 h-[auto] flex flex-col">
+            <div class="panel-header text-gray-300 shrink-0">
                 <span><i class="fas fa-th-large text-emerald-400 mr-2"></i>Sector Heatmap</span>
                 <span class="text-[10px] bg-emerald-900/40 text-emerald-400 px-1 rounded border border-emerald-800">ALL</span>
             </div>
-            <div class="flex-1 p-3 overflow-y-auto custom-scrollbar flex flex-wrap content-start gap-2" id="heatmap-container">
+            <div class="p-3 overflow-y-auto custom-scrollbar flex flex-wrap content-start gap-2 max-h-[50vh] shrink-0" id="heatmap-container">
                 <div class="text-xs text-gray-600 w-full text-center mt-10">스캐닝 중...</div>
             </div>
             <!-- All Filter Reset -->
-            <div class="p-2 border-t border-gray-800/50 bg-black/20">
+            <div class="p-2 border-t border-b border-gray-800/50 bg-black/20 shrink-0">
                 <button onclick="selectTheme('ALL')" class="w-full py-2 text-xs font-bold text-gray-400 hover:text-white bg-gray-800/50 rounded border border-gray-700 hover:border-gray-500 transition-colors">
                     <i class="fas fa-sync-alt mr-1"></i> 전체 섹터 초기화
                 </button>
             </div>
+
+            <!-- Kostolany Sniper 8 Watchlist -->
+            <div class="panel-header text-purple-400 border-t-0 bg-gradient-to-r from-purple-900/20 to-black shrink-0">
+                <span class="text-[13px] font-black tracking-wider"><i class="fas fa-crosshairs text-purple-500 mr-2"></i>AM 09:00-10:10 , KOSTOLANY SNIPER 8</span>
+                <span class="text-[9px] bg-purple-900/60 text-purple-200 px-1.5 py-0.5 rounded border border-purple-700 animate-pulse">종배 타겟망</span>
+            </div>
+            <div class="flex-1 p-2 overflow-y-auto custom-scrollbar flex flex-col gap-1.5 bg-gradient-to-b from-purple-950/10 to-transparent min-h-[200px]" id="kostolany-container">
+            </div>
         </section>
 
-        <!-- P2: Stock Commands (Detailed Cards) -->
-        <section class="panel w-full lg:w-1/2 h-[600px] lg:h-auto lg:flex-1">
-            <div class="panel-header text-white">
-                <span id="command-title"><i class="fas fa-crosshairs text-blue-500 mr-2"></i>Stock Commands <span class="text-gray-500 text-sm ml-2 font-normal">/ 타겟 전술 카드</span></span>
+        <!-- P2: Stock Commands & AI Briefing (Detailed Cards) -->
+        <section class="panel w-full lg:w-1/2 h-[600px] lg:h-auto lg:flex-1 flex flex-col">
+            <div class="panel-header text-white shrink-0">
+                <span id="command-title"><i class="fas fa-crosshairs text-red-500 mr-2"></i>Stock Commands <span class="text-gray-500 text-sm ml-2 font-normal">/ 타겟 전술 카드</span></span>
             </div>
+            
+            <!-- [NEW] Zhuge AI Core 실시간 통제 브리핑 창 -->
+            <div class="m-4 mb-0 p-4 border border-teal-500/50 bg-teal-950/20 rounded-lg shadow-[0_0_15px_rgba(20,184,166,0.15)] shrink-0 transition-all">
+                <div class="flex items-center justify-between mb-2 pb-2 border-b border-teal-800/60">
+                    <div class="flex items-center">
+                        <i class="fas fa-brain text-teal-400 mr-2 animate-pulse text-lg"></i>
+                        <span class="text-teal-300 font-bold tracking-wider text-[14px]">Zhuge AI Core (제갈공명 전술 브리핑)</span>
+                    </div>
+                    <span class="text-[10px] bg-teal-900/60 text-teal-200 px-1.5 py-0.5 rounded border border-teal-700">스마트 트리거 가동중</span>
+                </div>
+                <div id="zhuge-briefing-text" class="text-[13px] text-gray-300 leading-loose font-medium font-mono whitespace-pre-wrap">
+                    AI 코어 엔진 워밍업 중... (초기화)
+                </div>
+            </div>
+
             <div class="flex-1 p-4 overflow-y-auto custom-scrollbar grid grid-cols-1 md:grid-cols-2 gap-4 content-start" id="cards-container">
                 <!-- Cards injected here -->
             </div>
         </section>
 
-        <!-- P3: Intelligence Feed -->
-        <section class="panel w-full lg:w-1/4 h-[300px] lg:h-auto">
-            <div class="panel-header text-amber-500">
+        <!-- P3: Intelligence Feed & 7% Defense -->
+        <section class="panel w-full lg:w-1/4 h-[300px] lg:h-auto flex flex-col">
+            <div class="panel-header text-amber-500 shrink-0">
                 <span><i class="fas fa-bolt text-amber-500 mr-2"></i>Intelligence Feed</span>
                 <div class="w-1.5 h-1.5 bg-amber-500 rounded-full animate-ping"></div>
             </div>
-            <div class="flex-1 p-3 overflow-y-auto custom-scrollbar flex flex-col gap-3" id="feed-container">
+            <div class="flex-1 p-3 overflow-y-auto custom-scrollbar flex flex-col gap-3 min-h-[50%]" id="feed-container">
                 <!-- Feeds injected here -->
+            </div>
+            
+            <!-- NEW: 7% Defense Watchlist -->
+            <div class="panel-header text-blue-400 border-t border-gray-800 bg-blue-900/10 shrink-0">
+                <span class="text-[13px] font-bold"><i class="fas fa-shield-alt text-blue-500 mr-2"></i>PM:13:30 , 세력 (6%-12%) 지지 방어선</span>
+                <span class="text-[9px] bg-blue-900/40 text-blue-300 px-1 rounded border border-blue-800">오후장 노림수</span>
+            </div>
+            <div class="p-2 overflow-y-auto custom-scrollbar flex flex-col gap-1.5 bg-gradient-to-b from-blue-950/20 to-transparent min-h-[160px] max-h-[280px] shrink-0" id="defense-container">
             </div>
         </section>
 
@@ -193,11 +227,91 @@
     <!-- Toast Notification Container -->
     <div id="toast-container" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2 pointer-events-none"></div>
 
+    <!-- 환경 설정 모달 (텔레그램) -->
+    <div id="settings-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex justify-center items-center">
+        <div class="bg-gray-900 border border-gray-700 rounded-xl p-6 w-full max-w-md shadow-[0_0_30px_rgba(0,0,0,0.8)] relative">
+            <button onclick="document.getElementById('settings-modal').classList.add('hidden')" class="absolute top-4 right-4 text-gray-500 hover:text-white transition-colors">
+                <i class="fas fa-times text-2xl"></i>
+            </button>
+            <h3 class="text-xl font-black text-white mb-6 border-b border-gray-800 pb-3"><i class="fas fa-cog mr-2 text-gray-400"></i> 환경 설정</h3>
+            
+            <div class="mb-4 space-y-3">
+                <div class="text-[14px] text-gray-300 font-bold mb-2"><i class="fab fa-telegram text-blue-400 text-lg mr-1"></i> Telegram 봇 연동 (KRX 실전 알람)</div>
+                <input type="password" id="tg_bot_token" placeholder="Bot Token (ex: 1234:ABC...)" class="w-full bg-black border border-gray-700 rounded p-3 text-[14px] text-white focus:outline-none focus:border-red-500 transition-colors">
+                <input type="text" id="tg_chat_id" placeholder="Chat ID (ex: 1234567890)" class="w-full bg-black border border-gray-700 rounded p-3 text-[14px] text-white focus:outline-none focus:border-red-500 transition-colors">
+                <button onclick="saveTelegramSettings()" class="w-full bg-red-600/30 hover:bg-red-600/70 border border-red-500/50 text-red-200 mt-2 rounded p-3 text-[15px] transition-colors font-bold shadow-lg"><i class="fas fa-save mr-1"></i> KRX망 텔레그램 연동</button>
+            </div>
+            
+            <div class="mt-8 border-t border-gray-800 pt-6">
+                <h4 class="text-gray-400 font-bold mb-3 text-sm">KRX 레이더 통제소</h4>
+                <p class="text-[12px] text-gray-500">
+                    실시간으로 거래대금이 폭발하거나, 고점 대비 급락을 보이는 투매 종목을 포착하여 즉각적으로 주군의 핸드폰으로 타점을 전송합니다.
+                </p>
+            </div>
+        </div>
+    </div>
+
     <script>
         // Data State
         let topVolumeCache = [];
         let aiVerdictsCache = [];
         let selectedTheme = 'ALL';
+        let previousSignals = new Set();
+        let isTelegramLoaded = false;
+        
+        // 코스톨라니 스나이퍼 종목 캐시 (파이썬 백엔드가 조건에 맞는 종배 타겟을 자동 생성하여 주입)
+        let kostolanyList = [];
+
+        // --- 텔레그램 연동 ---
+        function loadTelegramSettings() {
+            const token = localStorage.getItem('tg_bot_token_us');
+            const chatId = localStorage.getItem('tg_chat_id_us');
+            if(token) document.getElementById('tg_bot_token').value = token;
+            if(chatId) document.getElementById('tg_chat_id').value = chatId;
+            isTelegramLoaded = true;
+        }
+
+        function saveTelegramSettings() {
+            const token = document.getElementById('tg_bot_token').value.trim();
+            const chatId = document.getElementById('tg_chat_id').value.trim();
+            localStorage.setItem('tg_bot_token_us', token);
+            localStorage.setItem('tg_chat_id_us', chatId);
+            if(token && chatId) {
+                sendTelegramMessage("✅ <b>[1004MAS US Radar]</b>\n\n주공, 텔레그램 전령 시스템 연동이 정상적으로 완료되었습니다. 앞으로 한국 현물 시장 급등락 리포트를 이곳으로 보고하겠습니다.");
+                alert("미국 주식(US) 텔레그램 설정이 기기(로컬)에 저장되었습니다.");
+            } else {
+                alert("토큰과 Chat ID를 모두 입력해주세요.");
+            }
+        }
+
+        async function sendTelegramMessage(text) {
+            const token = localStorage.getItem('tg_bot_token_us');
+            const chatId = localStorage.getItem('tg_chat_id_us');
+            if(!token || !chatId) return;
+            try {
+                await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ chat_id: chatId, text: text, parse_mode: 'HTML' })
+                });
+            } catch(e) { console.error("Telegram API Error", e); }
+        }
+
+        function checkUSAlerts(signals) {
+            if (signals.length === 0) return;
+            // Get newly added signals
+            const newSignals = signals.filter(s => !previousSignals.has(s.coin_name + s.timestamp));
+            if (newSignals.length > 0) {
+                let msg = "🚨 <b>[1004MAS US Radar 타점 포착]</b>\n\n";
+                newSignals.forEach(v => {
+                    const icon = v.signal === 'green' ? '🚀' : '💀';
+                    msg += `${icon} <b>${v.coin_name}</b>\n${v.reason || v.news_detail || ''}\n\n`;
+                    previousSignals.add(v.coin_name + v.timestamp);
+                });
+                sendTelegramMessage(msg);
+            }
+        }
+        // ------------------
 
         // 1. Clock & Mode
         function updateClocks() {
@@ -211,7 +325,7 @@
 
             if (diffMs <= 0) {
                 document.getElementById('market-close-timer').innerText = "CLOSED";
-                document.getElementById('market-close-timer').classList.replace('text-blue-500', 'text-gray-600');
+                document.getElementById('market-close-timer').classList.replace('text-red-500', 'text-gray-600');
             } else {
                 const hh = String(Math.floor(diffMs / (1000 * 60 * 60))).padStart(2, '0');
                 const mm = String(Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0');
@@ -220,12 +334,18 @@
             }
 
             const badge = document.getElementById('market-status-badge');
-            if (h === 8 && m >= 50 && m <= 59) {
-                badge.innerText = "PRE-MARKET 필터망";
-                badge.className = "text-[11px] font-bold bg-purple-600 px-2 py-0.5 rounded text-white animate-pulse";
-            } else if (h === 15 && m >= 0 && m <= 30) {
+            if (h === 8 && m >= 30 && m <= 59) {
+                badge.innerText = "PRE-MARKET 동시호가";
+                badge.className = "text-[13px] font-bold bg-purple-600 px-2 py-0.5 rounded text-white animate-pulse shrink-0";
+            } else if (h === 9 || (h >= 10 && h < 15) || (h === 15 && m < 20)) {
+                badge.innerText = "정규장 (실시간 감시중)";
+                badge.className = "text-[13px] font-bold bg-red-600/90 px-2 py-0.5 rounded text-white animate-pulse shrink-0";
+            } else if (h === 15 && m >= 20 && m <= 30) {
                 badge.innerText = "OVERNIGHT 종배 수급 감시";
-                badge.className = "text-[11px] font-bold bg-blue-600 px-2 py-0.5 rounded text-white";
+                badge.className = "text-[13px] font-bold bg-blue-600 px-2 py-0.5 rounded text-white shrink-0";
+            } else {
+                badge.innerText = "24/7 야간 제갈량 감시중";
+                badge.className = "text-[13px] font-bold bg-teal-600/80 px-2 py-0.5 rounded border border-teal-500/50 text-white animate-pulse shadow-lg shrink-0";
             }
         }
         setInterval(updateClocks, 1000);
@@ -236,42 +356,66 @@
         // 2. Data Fetch (CORS Bypass using Script Injection)
         function fetchData() {
             const script = document.createElement('script');
-            // 접속 환경(로컬 파일 vs 외부 도메인)에 따라 완벽하게 통신 경로 자동 분기
-            let dataUrl = '/us_data.js';
+            let dataUrl = `/us_data.js`;
             if (window.location.protocol === 'file:') {
-                dataUrl = 'http://localhost:8088/us_data.js';
-            } else {
-                dataUrl = 'https://concentrations-show-transparent-editor.trycloudflare.com/us_data.js';
+                dataUrl = `http://localhost:8088/us_data.js`;
+            } else if (window.location.hostname === 'us.1004mas.com') {
+                // 외부망(홈페이지)에서 접속 시, 주군의 로컬 컴퓨터로 연결되는 터널망 사용
+                dataUrl = `https://concentrations-show-transparent-editor.trycloudflare.com/us_data.js`;
             }
-            script.src = `${dataUrl}?t=${new Date().getTime()}`;
             
             script.onload = () => {
-                if (window.usTopVolume) topVolumeCache = window.usTopVolume;
-                if (window.usWhaleSignals) aiVerdictsCache = window.usWhaleSignals;
+                if(!isTelegramLoaded) loadTelegramSettings();
                 
-                // Update KOSPI / KOSDAQ Tickers
-                if (window.usIndices) {
-                    const kospi = document.getElementById('idx-kospi-price');
-                    const kospiChg = document.getElementById('idx-kospi-chg');
-                    const kosdaq = document.getElementById('idx-kosdaq-price');
-                    const kosdaqChg = document.getElementById('idx-kosdaq-chg');
-                    
-                    if(kospi && window.usIndices['KOSPI']) {
-                        let c = parseFloat(window.usIndices['KOSPI'].chg);
-                        kospi.innerText = window.usIndices['KOSPI'].price;
-                        kospiChg.innerText = (c > 0 ? '+' : '') + c + '%';
-                        kospiChg.className = c > 0 ? "ml-1 text-[9px] text-blue-500" : (c < 0 ? "ml-1 text-[9px] text-blue-500" : "ml-1 text-[9px] text-gray-500");
+                if (window.usTopVolume) topVolumeCache = window.usTopVolume;
+                if (window.usWhaleSignals) {
+                    aiVerdictsCache = window.usWhaleSignals;
+                    checkUSAlerts(aiVerdictsCache);
+                }
+                if (window.usKostolany) {
+                    kostolanyList = window.usKostolany;
+                }
+                
+                // Zhuge AI Core
+                if (window.usZhugeIntel && window.usZhugeIntel !== "초기화 중...") {
+                    const el = document.getElementById('zhuge-briefing-text');
+                    if(el) {
+                        el.innerHTML = window.usZhugeIntel.replace(/\n/g, '<br/>');
                     }
-                    if(kosdaq && window.usIndices['KOSDAQ']) {
-                        let c = parseFloat(window.usIndices['KOSDAQ'].chg);
-                        kosdaq.innerText = window.usIndices['KOSDAQ'].price;
-                        kosdaqChg.innerText = (c > 0 ? '+' : '') + c + '%';
-                        kosdaqChg.className = c > 0 ? "ml-1 text-[9px] text-blue-500" : (c < 0 ? "ml-1 text-[9px] text-blue-500" : "ml-1 text-[9px] text-gray-500");
+                }
+                
+                // Update S&P500 / NASDAQ Tickers
+                if (window.usIndices) {
+                    const kospiBox = document.getElementById('idx-sp500-box');
+                    const kospi = document.getElementById('idx-sp500-price');
+                    const kospiChg = document.getElementById('idx-sp500-chg');
+                    
+                    const kosdaqBox = document.getElementById('idx-nasdaq-box');
+                    const kosdaq = document.getElementById('idx-nasdaq-price');
+                    const kosdaqChg = document.getElementById('idx-nasdaq-chg');
+                    
+                    if(kospi && window.usIndices['S&P500']) {
+                        let c = parseFloat(window.usIndices['S&P500'].chg);
+                        let isUp = c > 0; let isDown = c < 0;
+                        kospi.innerText = window.usIndices['S&P500'].price;
+                        kospi.className = isUp ? "text-red-300 drop-shadow-sm" : (isDown ? "text-blue-300 drop-shadow-sm" : "text-white");
+                        kospiChg.innerHTML = isUp ? `<i class="fas fa-caret-up"></i> +${c}%` : (isDown ? `<i class="fas fa-caret-down"></i> ${c}%` : `${c}%`);
+                        kospiChg.className = "ml-2 text-[14px] " + (isUp ? "text-red-500 font-black" : (isDown ? "text-blue-500 font-black" : "text-gray-500 font-bold"));
+                        if(kospiBox) kospiBox.className = "text-[14px] flex items-center font-mono font-bold px-3 py-1 rounded border shadow-inner transition-colors " + (isUp ? "border-red-900/60 bg-red-950/20" : (isDown ? "border-blue-900/60 bg-blue-950/20" : "border-gray-700 bg-black/60"));
+                    }
+                    if(kosdaq && window.usIndices['NASDAQ']) {
+                        let c = parseFloat(window.usIndices['NASDAQ'].chg);
+                        let isUp = c > 0; let isDown = c < 0;
+                        kosdaq.innerText = window.usIndices['NASDAQ'].price;
+                        kosdaq.className = isUp ? "text-red-300 drop-shadow-sm" : (isDown ? "text-blue-300 drop-shadow-sm" : "text-white");
+                        kosdaqChg.innerHTML = isUp ? `<i class="fas fa-caret-up"></i> +${c}%` : (isDown ? `<i class="fas fa-caret-down"></i> ${c}%` : `${c}%`);
+                        kosdaqChg.className = "ml-2 text-[14px] " + (isUp ? "text-red-500 font-black" : (isDown ? "text-blue-500 font-black" : "text-gray-500 font-bold"));
+                        if(kosdaqBox) kosdaqBox.className = "text-[14px] flex items-center font-mono font-bold px-3 py-1 rounded border shadow-inner transition-colors " + (isUp ? "border-red-900/60 bg-red-950/20" : (isDown ? "border-blue-900/60 bg-blue-950/20" : "border-gray-700 bg-black/60"));
                     }
                 }
 
                 // 최적화: 데이터가 동일하면 불필요한 화면깜빡임(DOM 재렌더링) 방지
-                const currentHash = JSON.stringify(topVolumeCache) + JSON.stringify(aiVerdictsCache) + selectedTheme;
+                const currentHash = JSON.stringify(topVolumeCache) + JSON.stringify(aiVerdictsCache) + JSON.stringify(kostolanyList) + selectedTheme;
                 if (lastDataHash !== currentHash) {
                     renderAll();
                     lastDataHash = currentHash;
@@ -283,8 +427,13 @@
             script.onerror = () => {
                 document.head.removeChild(script);
             };
+            
+            // Add cache-busting timestamp to prevent browser from caching old JSON
+            script.src = dataUrl + '?t=' + new Date().getTime();
             document.head.appendChild(script);
         }
+
+        // fetchData is initialized below
 
         function selectTheme(themeName) {
             selectedTheme = themeName;
@@ -293,7 +442,7 @@
             // UI Update for Title
             const titleSpan = document.getElementById('command-title');
             if(themeName === 'ALL') {
-                titleSpan.innerHTML = `<i class="fas fa-crosshairs text-blue-500 mr-2"></i>Stock Commands <span class="text-gray-500 text-sm ml-2 font-normal">/ 전체 타겟</span>`;
+                titleSpan.innerHTML = `<i class="fas fa-crosshairs text-red-500 mr-2"></i>Stock Commands <span class="text-gray-500 text-sm ml-2 font-normal">/ 전체 타겟</span>`;
             } else {
                 titleSpan.innerHTML = `<i class="fas fa-filter text-amber-500 mr-2"></i>[${themeName}] 섹터 집중 포격중`;
             }
@@ -313,6 +462,131 @@
             renderHeatmap(merged);
             renderCards(merged);
             renderFeed();
+            renderKostolany();
+            renderDefenseLine();
+        }
+
+        // [Right Bottom] 7% Defense Line (어제 + 오늘 분리)
+        function renderDefenseLine() {
+            let html = '';
+            
+            // [1] 어제 종목 렌더링
+            if (window.usYesterdayDefenders && window.usYesterdayDefenders.length > 0) {
+                html += `<div class="mb-3">`;
+                html += window.usYesterdayDefenders.map(item => {
+                    const dropFromPeak = item.peak;
+                    const boxStyle = "bg-orange-950/20 border-orange-800/60 shadow-[0_0_8px_rgba(249,115,22,0.15)] hover:bg-orange-900/30";
+                    return `
+                        <div class="flex flex-col p-2.5 rounded-lg border ${boxStyle} transition-colors mb-1.5 opacity-90">
+                            <div class="flex justify-between items-center mb-1.5">
+                                <div class="flex items-center">
+                                    <span class="text-[10px] bg-orange-600 text-white px-1.5 py-0.5 rounded shadow-sm font-bold mr-2 tracking-tighter"><i class="fas fa-history mr-1"></i>어제 종목</span>
+                                    <span class="text-orange-200 font-bold text-[14px] drop-shadow-sm">${item.name}</span>
+                                </div>
+                                <span class="text-orange-400 font-black text-[14px] drop-shadow-md">+${parseFloat(item.chg).toFixed(1)}%</span>
+                            </div>
+                            <div class="flex justify-between items-center text-[12px] text-gray-500 border-t border-orange-900/40 pt-1.5">
+                                <span>마감 방어율: <span class="text-orange-300 font-bold">${dropFromPeak}%</span></span>
+                                <span class="font-bold text-gray-400 shadow-sm">${Math.round(item.vol)}억</span>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+                html += `</div>`;
+            }
+
+            // [2] 오늘 실시간 방어선 렌더링
+            const defenders = topVolumeCache.filter(v => parseFloat(v.chg) >= 6.0 && parseFloat(v.chg) <= 12.0);
+            
+            if (defenders.length === 0) {
+                html += `<div class="text-[13px] text-blue-500/50 font-bold text-center mt-3 border border-blue-900/30 rounded p-2 bg-blue-950/10">오늘(Live) 7% 방어 종목 없음</div>`;
+            } else {
+                html += defenders.map(item => {
+                    const dropFromPeak = item.peak; // e.g. -5.2
+                    // 고점 대비 -10% 이상 폭락하면서 지지선에 도달한 경우 (투매 위험 매우 높음)
+                    const isHeavyDump = dropFromPeak <= -10;
+                    
+                    const boxStyle = isHeavyDump 
+                        ? "bg-purple-950/20 border-purple-800/60 shadow-[0_0_8px_rgba(147,51,234,0.15)] hover:bg-purple-900/30" 
+                        : "bg-black/40 border-blue-900/60 shadow-[0_0_8px_rgba(59,130,246,0.1)] hover:bg-blue-900/20";
+                    
+                    const iconColor = isHeavyDump ? "text-purple-400 animate-pulse" : "text-blue-500";
+                    const peakTextColor = isHeavyDump ? "text-red-400 font-black animate-pulse" : "text-gray-300 font-bold";
+
+                    return `
+                        <div class="flex flex-col p-2.5 rounded-lg border ${boxStyle} transition-colors mb-1.5">
+                            <div class="flex justify-between items-center mb-1.5">
+                                <div class="flex items-center">
+                                    <i class="fas fa-shield-alt ${iconColor} text-[13px] mr-1.5 align-middle mt-0.5"></i>
+                                    <span class="text-white font-bold text-[15px] drop-shadow-sm">${item.name}</span>
+                                </div>
+                                <span class="text-red-400 font-black text-[15px] drop-shadow-md">+${parseFloat(item.chg).toFixed(1)}%</span>
+                            </div>
+                            <div class="flex justify-between items-center text-[13px] text-gray-400 border-t border-gray-800/70 pt-2 p-1">
+                                <span>실시간 고점붕괴: <span class="${peakTextColor}">${dropFromPeak}%</span></span>
+                                <span class="font-bold text-gray-300 shadow-sm">${Math.round(item.vol)}억</span>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+            
+            document.getElementById('defense-container').innerHTML = html;
+        }
+
+        // [Left Bottom] Kostolany Sniper
+        function renderKostolany() {
+            if (kostolanyList.length === 0) {
+                document.getElementById('kostolany-container').innerHTML = '<div class="text-[13px] text-purple-700 font-bold w-full text-center mt-10">스나이퍼 목표물 탐지 대기중...</div>';
+                return;
+            }
+
+            const html = kostolanyList.map((item, idx) => {
+                const realTimeData = topVolumeCache.find(v => v.name === item.name);
+                const isActive = !!realTimeData;
+
+                let borderColor = "border-gray-800 bg-black/40";
+                let titleColor = "text-gray-300 font-bold";
+                let icon = `<span class="text-gray-600 font-mono text-[9px] mr-1">0${idx+1}</span>`;
+                let liveStatus = `<span class="text-[14px] text-gray-400 font-bold ml-2">잠복중..</span>`;
+                let displayType = item.type;
+                let typeBgClass = "bg-purple-900/80 text-purple-200 border-purple-500/50";
+
+                if (isActive) {
+                    const isDumping = realTimeData.chg <= 0;
+                    const sign = realTimeData.chg > 0 ? '+' : '';
+                    const chgColor = realTimeData.chg > 0 ? 'text-red-400' : 'text-blue-400';
+                    liveStatus = `<span class="${chgColor} font-black text-[14px] drop-shadow-md ml-3">${sign}${realTimeData.chg.toFixed(1)}% <span class="text-white text-[12px] font-bold tracking-tighter opacity-90">(${realTimeData.vol}억)</span></span>`;
+                    
+                    if (!isDumping) {
+                        // 정상 상승 (돌격)
+                        borderColor = "border-red-500 shadow-[0_0_10px_rgba(239,68,68,0.3)] bg-red-950/20";
+                        titleColor = "text-red-400 font-black animate-pulse";
+                        icon = `<i class="fas fa-fire text-red-500 mr-1 animate-ping"></i>`;
+                    } else {
+                        // 전일 타겟이 당일 폭락 중 (위험)
+                        borderColor = "border-blue-800 shadow-[0_0_10px_rgba(30,58,138,0.5)] bg-blue-950/30";
+                        titleColor = "text-blue-400 font-black animate-pulse";
+                        icon = `<i class="fas fa-skull text-blue-500 mr-1 animate-pulse"></i>`;
+                        displayType = "[위험] 수급 이탈중";
+                        typeBgClass = "bg-gray-800/80 text-gray-400 border-gray-600";
+                    }
+                }
+
+                return `
+                    <div class="flex flex-col p-2.5 rounded-lg border ${borderColor} transition-all">
+                        <div class="flex justify-between items-center mb-1.5">
+                            <div class="flex flex-row items-center">
+                                <span class="text-[15px] ${titleColor} drop-shadow-sm">${icon}${item.name}</span>
+                                ${liveStatus}
+                            </div>
+                            <span class="text-[10px] font-bold ${typeBgClass} px-1.5 py-0.5 rounded border shrink-0 ml-1 drop-shadow-sm">${displayType}</span>
+                        </div>
+                        <div class="text-[14px] text-white font-medium leading-relaxed drop-shadow-sm">${item.reason}</div>
+                    </div>
+                `;
+            }).join('');
+            document.getElementById('kostolany-container').innerHTML = html;
         }
 
         // [Left] Heatmap 
@@ -349,9 +623,9 @@
 
                 return `
                     <div onclick="selectTheme('${theme}')" class="sector-box ${glowClass} ${isActive} ${widthClass} p-3 flex-grow" style="min-height: ${Math.max(60, weightRatio * 2)}px">
-                        <div class="text-[13px] text-white/90 drop-shadow-md z-10">${theme}</div>
-                        <div class="text-[10px] text-white/50 font-normal mt-1 z-10">${sec.totalVol.toLocaleString()} 억</div>
-                        ${avgVel > 1.5 ? `<i class="fas fa-fire text-blue-500/30 absolute text-4xl -z-0 right-2 bottom-0"></i>` : ''}
+                        <div class="text-[14px] text-white/90 drop-shadow-md z-10 font-bold">${theme}</div>
+                        <div class="text-[13px] text-white/70 font-medium mt-1 z-10">${sec.totalVol.toLocaleString()} 억</div>
+                        ${avgVel > 1.5 ? `<i class="fas fa-fire text-red-500/30 absolute text-4xl -z-0 right-2 bottom-0"></i>` : ''}
                     </div>
                 `;
             }).join('');
@@ -368,8 +642,22 @@
                 return;
             }
 
-            const html = filtered.map((s, idx) => {
-                const chgColor = s.chg > 0 ? 'text-blue-500' : 'text-blue-500';
+            // 중앙 메인 카드는 10개로 제한 (나머지 20개는 방어선 트래킹용)
+            const top10 = filtered.slice(0, 10);
+            
+            const goodCards = [];
+            const badCards = [];
+            
+            top10.forEach((s, idx) => {
+                 let safePeak = s.peak !== undefined ? parseFloat(s.peak) : 0;
+                 if (s.chg <= 0 || safePeak <= -5.0) badCards.push({s, idx});
+                 else goodCards.push({s, idx});
+            });
+
+            const renderSingleCard = (item) => {
+                const s = item.s;
+                const idx = item.idx;
+                const chgColor = s.chg > 0 ? 'text-red-500' : 'text-blue-500';
                 const sign = s.chg > 0 ? '+' : '';
                 
                 // Safe parsing for old data
@@ -378,69 +666,99 @@
                 
                 let volPct = Math.min(100, (s.vol / 20000) * 100); 
                 let velPct = Math.min(100, Math.max(0, (safeVel / 4) * 100));
-                let velBarColor = safeVel > 1.5 ? 'bg-blue-500' : 'bg-gray-500';
+                let velBarColor = safeVel > 1.5 ? 'bg-red-500' : 'bg-gray-500';
+                if (safeVel >= 1.0 && (s.chg <= 0 || safePeak <= -5.0)) {
+                    velBarColor = 'bg-purple-500'; // 투매 가속도 경고 (보라색)
+                }
                 if(safeVel < 0) { velPct = Math.min(100, Math.abs(safeVel/4) * 100); velBarColor = 'bg-blue-500'; }
                 
                 let peakSafePct = Math.max(0, 100 - (Math.abs(safePeak) / 5 * 100));
                 let peakBarColor = safePeak <= -3 ? 'bg-blue-500' : 'bg-indigo-400';
 
-                // Badge Logic Separation
-                let themeText = s.theme || '주도주';
-                let isStrong = (safeVel >= 1.0 || (s.vol/1000) > 3);
+                // Badge & Theme Logic Separation
+                let isDumping = (s.chg <= 0 || safePeak <= -5.0);
+                let themeText = s.theme || '개별주';
+                
+                // 폭락주인데 '주도주'라고 표시되는 모순 수정
+                if (isDumping && themeText === '주도주') {
+                    themeText = '개별급락';
+                }
+
+                let badgeHTML = '';
+                if (safeVel >= 1.0 || (s.vol/1000) > 3) {
+                    if (isDumping) {
+                        badgeHTML = '<span class="text-[12px] bg-purple-900/60 text-purple-400 border-purple-700/50 px-2 py-0.5 rounded border font-bold animate-pulse"><i class="fas fa-skull"></i> 강력 투매(도주)</span>';
+                    } else {
+                        badgeHTML = '<span class="text-[12px] bg-red-900/60 text-red-500 border-red-700/50 px-2 py-0.5 rounded border font-bold"><i class="fas fa-fire"></i> 강력 매집중</span>';
+                    }
+                }
+
+                // 테마 뱃지 색상도 폭락 상태면 보라색 톤으로 변경
+                let themeBadgeColor = isDumping ? "bg-purple-950/40 text-purple-300 border-purple-800/50" : "bg-gray-800/80 text-gray-300 border-gray-700";
 
                 return `
                     <div class="glass-card flex flex-col h-full hover:border-gray-500 transition-colors">
                         <div class="flex justify-between items-start mb-4">
                             <div class="flex flex-col">
-                                <div class="flex items-center gap-1.5 mb-1.5">
-                                    <span class="text-[10px] text-gray-500 font-mono italic opacity-60">0${idx+1}</span>
-                                    <span class="text-[9px] bg-gray-800/80 text-gray-400 border-gray-700 px-1.5 py-0.5 rounded border font-bold">${themeText}</span>
-                                    ${isStrong ? '<span class="text-[9px] bg-blue-900/60 text-blue-500 border-red-700/50 px-1.5 py-0.5 rounded border font-bold">🔥 강력 매집중</span>' : ''}
+                                <div class="flex items-center gap-1.5 mb-2.5">
+                                    <span class="text-[13px] text-gray-500 font-mono italic opacity-60">0${idx+1}</span>
+                                    <span class="text-[12px] ${themeBadgeColor} px-1.5 py-0.5 rounded border font-bold">${themeText}</span>
+                                    ${badgeHTML}
                                 </div>
-                                <h2 class="text-xl md:text-2xl font-black text-white tracking-tight">${s.name}</h2>
+                                <h2 class="text-2xl md:text-3xl font-black text-white tracking-tight drop-shadow-md">${s.name}</h2>
                             </div>
                             <div class="text-right">
-                                <div class="text-2xl md:text-3xl font-black ${chgColor} tracking-tighter drop-shadow-md">${sign}${s.chg.toFixed(1)}%</div>
-                                <div class="text-xs text-gray-500 font-bold mt-1">${s.vol.toLocaleString()} 억원</div>
+                                <div class="text-3xl md:text-3xl font-black ${chgColor} tracking-tighter drop-shadow-md">${sign}${s.chg.toFixed(1)}%</div>
+                                <div class="text-[14px] text-gray-300 font-bold mt-1 shadow-sm">${s.vol.toLocaleString()} 억원</div>
                             </div>
                         </div>
 
                         <div class="space-y-3 mb-4 flex-grow">
                             <!-- 거래금 Bar -->
-                            <div class="flex items-center justify-between text-[11px]">
-                                <span class="text-gray-400 font-medium w-16">거래금</span>
-                                <div class="flex-1 mx-2 h-1.5 bg-gray-900 rounded-full overflow-hidden border border-gray-800">
+                            <div class="flex items-center justify-between text-[13px] font-bold">
+                                <span class="text-gray-400 w-20">거래대금</span>
+                                <div class="flex-1 mx-2 h-2.5 bg-gray-900 rounded-full overflow-hidden border border-gray-800 shadow-inner">
                                     <div class="h-full bg-emerald-500 stat-bar-fill" style="width: ${volPct}%"></div>
                                 </div>
-                                <span class="text-emerald-400 font-mono w-8 text-right">${Math.round(s.vol/1000)}k</span>
+                                <span class="text-emerald-400 font-mono w-12 text-right">${Math.round(s.vol/1000)}k</span>
                             </div>
                             <!-- 가속도 Bar -->
-                            <div class="flex items-center justify-between text-[11px]">
-                                <span class="text-gray-400 font-medium w-16">가속도(Vel)</span>
-                                <div class="flex-1 mx-2 h-1.5 bg-gray-900 rounded-full overflow-hidden border border-gray-800">
+                            <div class="flex items-center justify-between text-[13px] font-bold">
+                                <span class="text-gray-400 w-20">가속도(Vel)</span>
+                                <div class="flex-1 mx-2 h-2.5 bg-gray-900 rounded-full overflow-hidden border border-gray-800 shadow-inner">
                                     <div class="h-full ${velBarColor} stat-bar-fill" style="width: ${velPct}%"></div>
                                 </div>
-                                <span class="${safeVel>0?'text-cyan-400':'text-gray-500'} font-mono w-8 text-right">${safeVel>0?'+':''}${safeVel.toFixed(1)}</span>
+                                <span class="${safeVel>0?'text-white drop-shadow-[0_0_5px_rgba(255,255,255,0.7)]':'text-gray-500'} font-mono w-12 text-right">${safeVel>0?'+':''}${safeVel.toFixed(1)}</span>
                             </div>
                             <!-- 고점유지력 Bar -->
-                            <div class="flex items-center justify-between text-[11px]">
-                                <span class="text-gray-400 font-medium w-16">고점유지력</span>
-                                <div class="flex-1 mx-2 h-1.5 bg-gray-900 rounded-full overflow-hidden border border-gray-800">
+                            <div class="flex items-center justify-between text-[13px] font-bold">
+                                <span class="text-gray-400 w-20">고점유지력</span>
+                                <div class="flex-1 mx-2 h-2.5 bg-gray-900 rounded-full overflow-hidden border border-gray-800 shadow-inner">
                                     <div class="h-full ${peakBarColor} stat-bar-fill" style="width: ${peakSafePct}%"></div>
                                 </div>
-                                <span class="text-indigo-400 font-mono w-10 text-right">${safePeak.toFixed(2)}%</span>
+                                <span class="text-indigo-300 font-mono w-12 text-right">${safePeak.toFixed(2)}%</span>
                             </div>
                         </div>
 
                         ${s.news ? `
-                        <div class="mt-2 p-3 rounded-lg border border-yellow-600/40 bg-yellow-900/20 mb-1 pulse-news shadow-inner">
-                            <div class="text-[11px] font-bold text-yellow-500 mb-1"><i class="fas fa-bolt mr-1 text-yellow-400"></i>[정보/재료] 포착</div>
-                            <div class="text-[11px] text-gray-300 leading-relaxed font-medium">${s.news}</div>
+                        <div class="mt-2 p-3 rounded-lg border border-yellow-600/50 bg-yellow-900/30 mb-1 pulse-news shadow-inner">
+                            <div class="text-[13px] font-bold text-yellow-400 mb-1.5"><i class="fas fa-bolt mr-1 text-yellow-300"></i>[정보/재료] 포착</div>
+                            <div class="text-[14px] text-white leading-relaxed font-medium drop-shadow-sm">${s.news}</div>
                         </div>
                         ` : ''}
                     </div>
                 `;
-            }).join('');
+            };
+
+            let html = '';
+            if (goodCards.length > 0) {
+                html += `<div class="col-span-full border-b border-red-900/40 pb-2 mb-2 mt-1"><span class="text-red-500 font-bold text-sm drop-shadow-md"><i class="fas fa-rocket mr-1"></i>🎯 집중 매수 타겟 (상승 돌격대)</span></div>`;
+                html += goodCards.map(renderSingleCard).join('');
+            }
+            if (badCards.length > 0) {
+                html += `<div class="col-span-full border-b border-purple-900/40 pb-2 mb-2 mt-4"><span class="text-purple-400 font-bold text-sm drop-shadow-md"><i class="fas fa-skull mr-1"></i>💀 투매 폭포수 (접근 금지)</span></div>`;
+                html += badCards.map(renderSingleCard).join('');
+            }
             document.getElementById('cards-container').innerHTML = html;
         }
 
@@ -456,7 +774,7 @@
                 let icon = "fa-info-circle";
                 
                 if(v.signal === 'green') {
-                    badgeClass = "bg-red-950/40 border-red-800 text-blue-400";
+                    badgeClass = "bg-red-950/40 border-red-800 text-red-400";
                     icon = "fa-crosshairs";
                 } else if(v.signal === 'purple') {
                     badgeClass = "bg-purple-950/40 border-purple-800 text-purple-400";
@@ -464,17 +782,34 @@
                 }
 
                 // Append any generic DART strings if available
-                let content = v.news_detail ? `**[DART/NEWS]** ${v.news_detail}` : v.reason;
+                let content = v.news_detail ? `<span class="text-amber-500 font-black"><i class="fas fa-bolt mr-1"></i>[실시간 수급포착]</span> ${v.news_detail}` : v.reason;
                 // format simple string line breaks
                 content = content.replace(/\n/g, '<br/>');
 
+                // 1분 이내 새로 들어온 피드 처리 (깜빡임 이펙트)
+                let pulseClass = "";
+                if (v.timestamp) {
+                    const now = new Date();
+                    const parts = v.timestamp.split(':');
+                    if(parts.length === 3) {
+                        const h = parseInt(parts[0], 10);
+                        const m = parseInt(parts[1], 10);
+                        const s = parseInt(parts[2], 10);
+                        const t = new Date(now.getFullYear(), now.getMonth(), now.getDate(), h, m, s);
+                        // 현재 시간 기준 60초(60000ms) 이내의 피드면 깜빡임
+                        if (now - t >= 0 && now - t <= 60000) {
+                            pulseClass = "animate-pulse shadow-[0_0_15px_rgba(250,204,21,0.3)] border border-yellow-400/80";
+                        }
+                    }
+                }
+
                 return `
-                    <div class="flex flex-col text-[11px] p-2.5 rounded-lg border ${badgeClass} mb-1">
-                        <div class="flex justify-between items-center mb-1">
-                            <span class="font-mono text-[9px] opacity-70">[${v.timestamp}]</span>
-                            <span class="font-black text-[10px]"><i class="fas ${icon} mr-1"></i>${v.coin_name}</span>
+                    <div class="flex flex-col text-[11px] p-2.5 rounded-lg border ${badgeClass} ${pulseClass} mb-1 transition-all duration-300">
+                        <div class="flex justify-between items-center mb-1 border-b border-white/10 pb-1">
+                            <span class="font-mono text-[14px] text-white font-black drop-shadow-lg">[${v.timestamp}]</span>
+                            <span class="font-black text-[15px] text-yellow-400 drop-shadow-md tracking-tight"><i class="fas ${icon} opacity-80 mr-1 text-white/50"></i>${v.coin_name}</span>
                         </div>
-                        <div class="text-gray-200/90 leading-snug drop-shadow-sm mt-0.5">${content}</div>
+                        <div class="text-gray-100 text-[12px] font-medium leading-relaxed drop-shadow-sm mt-1">${content}</div>
                     </div>
                 `;
             }).join('');
@@ -506,7 +841,7 @@
             const toast = document.createElement('div');
             
             let bgClass = "bg-gray-800 border-gray-700 text-white";
-            if (color === 'red') bgClass = "bg-blue-900 border-red-600 text-white";
+            if (color === 'red') bgClass = "bg-red-900 border-red-600 text-white";
             if (color === 'green') bgClass = "bg-emerald-900 border-emerald-600 text-white";
             
             toast.className = `px-4 py-2 rounded shadow-lg border text-sm font-bold opacity-0 transition-opacity duration-300 ${bgClass}`;
